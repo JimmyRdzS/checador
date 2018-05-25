@@ -216,7 +216,7 @@ function init(){
 			}
 		},
 		messages: {
-			clave: {
+			admin_password: {
 				required: "Ingrese su clave.",
 				remote: "La clave es incorrecta."
 			}

@@ -57,6 +57,24 @@ function change_password(id, nombre) {
 	$("#change_password").modal('open');
 }
 
+function detalles(id) {
+	$.ajax({
+		url:  base_url + 'checador/Main_controller/register_data',
+		type:  'post',
+		data: {'id': id},
+		success: function(respuesta){
+			if(respuesta){
+				$("#datos-registro").html(respuesta);
+				$('#id_eliminar').val(id);
+				$("#eliminar_registro").modal('open');
+			}
+		},
+		error:  function(xhr,err){ 
+			console.log("readyState: "+xhr.readyState+"\nstatus: "+xhr.status+"\n \n responseText: "+xhr.responseText);
+		}
+	});
+}
+
 function get_username(clave) {
 	var name = '';
 
@@ -207,6 +225,57 @@ function init(){
 						Materialize.updateTextFields();
 						$('#contact_submit_message').removeClass('hide');
 						$('#contact_submit_message').addClass('animated fadeIn');
+					}
+				},
+				error:  function(xhr,err){ 
+					console.log("readyState: "+xhr.readyState+"\nstatus: "+xhr.status+"\n \n responseText: "+xhr.responseText);
+				}
+			});
+		}
+	});
+
+	$('#form_editar_usuario').validate({
+		rules: {
+			admin_password: {
+				required: true,
+				remote: {
+					url: base_url + "checador/Main_controller/check_admin_hash",
+					type: "post",
+					data: {
+						admin_password: function() {
+							return $( "#admin_password" ).val();
+						}
+					}
+				}
+			},
+			password2: {
+				equalTo: "#password1"
+			},
+		},
+		messages: {
+			admin_password: {
+				required: "Ingrese su clave.",
+				remote: "La clave es incorrecta."
+			},
+			password2: {
+				required: "Ingrese la clave nuevamente.",
+				equalTo: "La clave no coincide."
+			},
+		},
+		submitHandler: function(form) {
+			var respuesta = false;
+
+			$.ajax({
+				url:  base_url + 'checador/Main_controller/edit_user_control',
+				type:  'post',
+				data: $(form).serialize(),
+				success: function(respuesta){
+					if(respuesta){
+						window.location.href = base_url+'users';
+					}
+					else{
+						$('#edit_message').removeClass('hide');
+						$('#edit_message').addClass('animated fadeIn');
 					}
 				},
 				error:  function(xhr,err){ 

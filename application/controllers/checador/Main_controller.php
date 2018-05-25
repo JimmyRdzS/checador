@@ -13,6 +13,12 @@ class Main_controller extends CI_Controller {
         if( ! $this->session->has_userdata('auth')){
             $page = 'home';
         }
+        else{
+            if($this->session->userdata('auth') == false){
+                $this->session->sess_destroy();
+                redirect('home');
+            }
+        }
 
         switch ($page) {
             case 'home':
@@ -68,6 +74,20 @@ class Main_controller extends CI_Controller {
         }
     }
 
+    public function delete_register(){
+        $id = $_POST["id_eliminar"];
+
+        $this->db->set('status', 0);
+        $this->db->where('id', $id);
+
+        if($this->db->update('historial')){
+            echo true;
+        }
+        else{
+            echo false;
+        }
+    }
+
     public function edit_user(){
         $id = $this->uri->segment(2);
         $row = '';
@@ -115,46 +135,27 @@ class Main_controller extends CI_Controller {
     }
 
     public function edit_user_control(){
-        $bandera = 0;
+
         $id = $_POST["id_user"];
 
-        if($_POST['type'] == "Administrador"){
-            $agencia = "0";
-        }
-        else{
-            $agencia = "1";
-            $bandera = 1;
-            $marcas_seleccionadas = $_POST["agencia_user"];
-        }
-
-        $this->db->set('name', $_POST["name"]);
-        $this->db->set('email', $_POST["email"]);
-        $this->db->set('password', $_POST["password1"]);
-        $this->db->set('type', $_POST["editar-type"]);
-        $this->db->set('agencia', $agencia);
+        $this->db->set('nombre', $_POST["name"]);
+        $this->db->set('clave', $_POST["password1"]);
+        $this->db->set('tipo', $_POST["type"]);
         $this->db->where('id', $id);
 
-        if($this->db->update('users')){
-            if($bandera == 1){
-                $this->db->where('id_user', $id);
-                $this->db->delete('marca');
-
-                foreach ($marcas_seleccionadas as $marca) {
-                    $data = array(
-                        'id_user' => $id,
-                        'id_marca' => $marca,
-                    );
-
-                    $this->db->insert('marca', $data);
-                }
-            }
-
+        if($this->db->update('usuarios')){
             if($id == $this->session->userdata('id')){
+                if($_POST["type"] == 1){
+                    $auth = true;
+                }
+                else{
+                    $auth = false;
+                }
+
                 $data = array(
+                    'id' => $id,
                     'name' => $_POST["name"],
-                    'email' => $_POST["email"],
-                    'type' => $_POST["editar-type"],
-                    'agencia' => $_POST["agencia_user"]
+                    'auth' => $auth
                 ); 
 
                 $this->session->set_userdata($data);
@@ -453,6 +454,31 @@ class Main_controller extends CI_Controller {
         echo $response;
     }
 
+    public function register_data(){
+
+        $html ='
+        <div class="card col s12">
+            <table class="responsive-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Entrada</th>
+                        <th>Salida</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Prueba</td>
+                        <td>Prueba</td>
+                        <td>Prueba</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>';
+
+        echo $html;
+    }
+
     public function last_register_data(){
         $this->db->select('MAX(updated_at) as last_update');
         $this->db->from('historial');
@@ -528,6 +554,7 @@ class Main_controller extends CI_Controller {
 
         foreach ($query->result_array() as $row)
         {
+            $bandera = 0;
             if($row['status'] != 0){
                 $this->db->select('nombre');
                 $this->db->from('usuarios');
@@ -544,6 +571,7 @@ class Main_controller extends CI_Controller {
                 <td>';
                 if(!empty($row['exit_date'])){
                     $html.= $row['exit_date'];
+                    $bandera = 1;
                 }
                 else{
                     $html.= "Sin registrar";
@@ -557,8 +585,13 @@ class Main_controller extends CI_Controller {
                     $html.= "Sin registrar";
                 }
                 $html.='</td>
-                <td class="center-align">
-                <a href="javascript:;" class="btn-floating btn-small waves-effect waves-light teal tooltipped ml5" data-position="right" data-delay="50" data-tooltip="Detalles" onclick="detalles('.$row['id'].')"><i class="material-icons">receipt</i></a>
+                <td class="center-align">';
+
+                if($bandera == 1){
+                    $html.= '<a href="javascript:;" class="btn-floating btn-small waves-effect waves-light teal tooltipped ml5" data-position="right" data-delay="50" data-tooltip="Detalle de actividad" onclick="detalles('.$row['id'].')"><i class="material-icons">receipt</i></a>';
+                }
+
+                $html.='
                 <a href="'.base_url('/editar_registro/').$row['id'].'" class="btn-floating btn-small waves-effect waves-light amber accent-3 tooltipped ml5" data-position="right" data-delay="50" data-tooltip="Editar"><i class="material-icons">edit</i></a>
                 <a href="javascript:;" class="btn-floating btn-small waves-effect waves-light red darken-1 tooltipped ml5" data-position="right" data-delay="50" data-tooltip="Eliminar" onclick="eliminar('.$row['id'].')"><i class="material-icons">delete</i></a>
                 </td>
@@ -722,11 +755,11 @@ class Main_controller extends CI_Controller {
             $tiempo_aux = (number_format((float)$tiempo/60, 2, '.', ''));
 
             $obj = array(
-            'label' => $usuarios->nombre,
-            'backgroundColor' => 'rgba('.$data[$contador]['rgb'].',0.4)',
-            'borderColor' => 'rgba('.$data[$contador]['rgb'].',1)',
-            'borderWidth' => 1,
-            'data' => array($tiempo_aux)
+                'label' => $usuarios->nombre,
+                'backgroundColor' => 'rgba('.$data[$contador]['rgb'].',0.4)',
+                'borderColor' => 'rgba('.$data[$contador]['rgb'].',1)',
+                'borderWidth' => 1,
+                'data' => array($tiempo_aux)
             );
 
             $contador++;
@@ -804,8 +837,10 @@ class Main_controller extends CI_Controller {
             }
             else{
                 array_push($aux, (strtotime($date_id) * 1000 - 18000000));
-                array_push($aux, strtotime('12:00:00') * 1000 - 18000000);
-                array_push($aux, strtotime('12:00:00') * 1000 - 18000000);
+                // array_push($aux, strtotime('12:00:00') * 1000 - 18000000);
+                // array_push($aux, strtotime('12:00:00') * 1000 - 18000000);
+                array_push($aux, null);
+                array_push($aux, null);
             }
 
             array_push($response, $aux);

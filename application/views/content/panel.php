@@ -60,3 +60,37 @@
     </table>
   </div>
 </div>
+
+<div id="eliminar_registro" class="modal">
+  <div class="modal-content">
+    <div class="row">
+      <div class="col l12 center">
+        <h5>Está seguro que desea eliminar el registro?:</h5>
+        <div class="divider"></div>     
+      </div>
+      <div class="col s12 center-align">
+        <p id="delete_message" class="hide"></p>
+      </div>
+      <div id="datos-registro" class="col s12 center-align">
+        
+      </div>
+      <div class="col l12">
+        <form id="delete_user_form" name="delete_user_form" class="col s12">
+
+          <div class="input-field">
+            <i class="material-icons prefix">vpn_key</i>
+            <input id="password_admin" type="password" class="validate" name="password_admin" required>
+            <label for="password_admin">Ingrese su clave</label>
+          </div>
+
+          <input id="id_eliminar" type="hidden" name="id_eliminar">
+
+          <div class="input-field right-align">
+            <button href="#!" class="modal-action modal-close waves-effect waves-green btn-flat" type="reset">Cancelar</button>
+            <button type="submit" class="btn waves-effect btn-block waves-light green">Eliminar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
