@@ -75,7 +75,7 @@
         
       </div>
       <div class="col l12">
-        <form id="delete_user_form" name="delete_user_form" class="col s12">
+        <form id="delete_register_form" name="delete_register_form" class="col s12">
 
           <div class="input-field">
             <i class="material-icons prefix">vpn_key</i>

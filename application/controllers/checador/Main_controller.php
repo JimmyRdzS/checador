@@ -455,28 +455,56 @@ class Main_controller extends CI_Controller {
     }
 
     public function register_data(){
+        $this->db->select('id_user, entry_date, entry_time, exit_date, exit_time');
+        $this->db->from('historial');
+        $this->db->where('id', $_POST['id']);
+        $query = $this->db->get();
+        $row = $query->row();
 
-        $html ='
-        <div class="card col s12">
-            <table class="responsive-table">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Entrada</th>
-                        <th>Salida</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Prueba</td>
-                        <td>Prueba</td>
-                        <td>Prueba</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>';
+        if (isset($row)){
+            $this->db->select('nombre');
+            $this->db->from('usuarios');
+            $this->db->where('id', $row->id_user);
+            $query2 = $this->db->get();
+            $row2 = $query2->row();
 
-        echo $html;
+
+            if (isset($row2)){
+                $this->db->select('nombre');
+                $this->db->from('usuarios');
+                $this->db->where('id', $row->id_user);
+                $query2 = $this->db->get();
+                $row2 = $query2->row();
+
+                $html ='
+                <div class="card col s12">
+                    <table class="responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Entrada</th>
+                                <th>Salida</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>'.$row2->nombre.'</td>
+                                <td>'.get_date_string($row->entry_date).' - '.$row->entry_time.'</td>
+                                <td>'.get_date_string($row->exit_date).' - '.$row->exit_time.'</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>';
+
+                echo $html;
+            }
+            else{
+                echo false;
+            }
+        }
+        else{
+            echo false;
+        }
     }
 
     public function last_register_data(){

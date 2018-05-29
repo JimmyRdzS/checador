@@ -46,18 +46,6 @@ Chart.plugins.register({
 });
 
 function eliminar(id, nombre) {
-	$("#eliminar_nombre").html(nombre);
-	$('#id_eliminar').val(id);
-	$("#eliminar_usuario").modal('open');
-}
-
-function change_password(id, nombre) {
-	$("#cp_nombre").html(nombre);
-	$('#id').val(id);
-	$("#change_password").modal('open');
-}
-
-function detalles(id) {
 	$.ajax({
 		url:  base_url + 'checador/Main_controller/register_data',
 		type:  'post',
@@ -73,6 +61,16 @@ function detalles(id) {
 			console.log("readyState: "+xhr.readyState+"\nstatus: "+xhr.status+"\n \n responseText: "+xhr.responseText);
 		}
 	});
+}
+
+function change_password(id, nombre) {
+	$("#cp_nombre").html(nombre);
+	$('#id').val(id);
+	$("#change_password").modal('open');
+}
+
+function detalles(id) {
+	
 }
 
 function get_username(clave) {
@@ -333,6 +331,54 @@ function init(){
 		}
 	});
 
+	$('#delete_register_form').validate({
+		rules: {
+			password_admin: {
+				required: true,
+				remote: {
+					url: "checador/Main_controller/check_admin_hash",
+					type: "post",
+					data: {
+						admin_password: function() {
+							return $( "#password_admin" ).val();
+						}
+					}
+				}
+			}
+		},
+		messages: {
+			password_admin: {
+				required: "Ingrese su clave.",
+				remote: "La clave no coincide."
+			}
+		},
+		submitHandler: function(form) {
+			var respuesta = false;
+
+			$.ajax({
+				url:  base_url + 'checador/Main_controller/delete_register',
+				type:  'post',
+				data: $(form).serialize(),
+				success: function(respuesta){
+					if(respuesta){
+						window.location.href = "panel";
+					}
+					else{
+						$('#delete_message').html('Ha ocurrido un error, por favor intente nuevamente.');
+						$('#delete_message').removeClass('hide');
+						$('#delete_message').addClass('animated fadeIn');
+
+						$('#password_admin').val('');
+						Materialize.updateTextFields();
+					}
+				},
+				error:  function(xhr,err){ 
+					console.log("readyState: "+xhr.readyState+"\nstatus: "+xhr.status+"\n \n responseText: "+xhr.responseText);
+				}
+			});
+		}
+	});
+
 	$('#form_changep').validate({
 		rules: {
 			password_confirmation: {
@@ -398,8 +444,8 @@ function get_home_data(){
 			}
 
 			$('#dataTable').DataTable({
-				"scrollX": true,
 				dom: 'Bfrtip',
+				"order": [[ 1, 'desc' ], [ 2, 'asc' ]],
 				buttons: [
 				{
 					extend: 'excel',
@@ -467,7 +513,6 @@ function get_users_data(){
 			}
 
 			$('#users_dataTable').DataTable({
-				"scrollX": true,
 				dom: 'Bfrtip',
 				buttons: [
 				{
