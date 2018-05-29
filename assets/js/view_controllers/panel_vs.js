@@ -134,6 +134,48 @@ function init(){
 		ignore: []
 	});
 
+	$('#entry-datepicker').pickadate({
+		selectMonths: true,
+		selectYears: 15,
+		closeOnSelect: false,
+
+		monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+		weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+		weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		showMonthsShort: undefined,
+		showWeekdaysFull: undefined,
+
+		today: 'Hoy',
+		clear: 'Limpiar',
+		close: 'Ok',
+
+		labelMonthNext: 'Siguiente mes',
+		labelMonthPrev: 'Mes pasado',
+		labelMonthSelect: 'Seleccione un mes',
+		labelYearSelect: 'Seleccione un año',
+
+		formatSubmit: 'yyyy-mm-dd',
+		hiddenPrefix: 'prefix__',
+		hiddenName: true,
+
+		min: false,
+		max: false
+	});
+
+	$('.timepicker').pickatime({
+		default: 'now',
+		fromnow: 0,
+		twelvehour: false,
+		donetext: 'OK',
+		cleartext: 'Limpiar',
+		canceltext: 'Cancelar',
+		container: undefined,
+		autoclose: false,
+		ampmclickable: true,
+		aftershow: function(){}
+	});
+
 	var home_data = document.getElementById('home_data');
 	if(home_data){
 		get_home_data();
@@ -168,6 +210,30 @@ function init(){
 						console.log("readyState: "+xhr.readyState+"\nstatus: "+xhr.status+"\n \n responseText: "+xhr.responseText);
 					}
 				});
+			},
+			error:  function(xhr,err){ 
+				console.log("readyState: "+xhr.readyState+"\nstatus: "+xhr.status+"\n \n responseText: "+xhr.responseText);
+			}
+		});
+	}
+
+	var registro_edit = document.getElementById('form_editar_registro');
+	if(registro_edit){
+		var id_registro = document.getElementById("id_registro").value;
+
+		$.ajax({
+			url:  base_url + 'checador/Main_controller/load_calendar',
+			type: 'post',
+			data: {'id' : id_registro},
+			success: function(respuesta){
+				if(respuesta){
+					var datos = JSON.parse(respuesta);
+					$('#nombre-empleado').html(datos.name);
+
+					var $input = $('#entry-datepicker').pickadate();
+					var picker = $input.pickadate('picker');
+					picker.set('select', datos.entry_date, { format: 'yyyy-mm-dd' });
+				}
 			},
 			error:  function(xhr,err){ 
 				console.log("readyState: "+xhr.readyState+"\nstatus: "+xhr.status+"\n \n responseText: "+xhr.responseText);
@@ -236,6 +302,50 @@ function init(){
 						Materialize.updateTextFields();
 						$('#contact_submit_message').removeClass('hide');
 						$('#contact_submit_message').addClass('animated fadeIn');
+					}
+				},
+				error:  function(xhr,err){ 
+					console.log("readyState: "+xhr.readyState+"\nstatus: "+xhr.status+"\n \n responseText: "+xhr.responseText);
+				}
+			});
+		}
+	});
+
+	$('#form_editar_registro').validate({
+		rules: {
+			admin_password: {
+				required: true,
+				remote: {
+					url: base_url + "checador/Main_controller/check_admin_hash",
+					type: "post",
+					data: {
+						admin_password: function() {
+							return $( "#admin_password" ).val();
+						}
+					}
+				}
+			}
+		},
+		messages: {
+			admin_password: {
+				required: "Ingrese su clave.",
+				remote: "La clave es incorrecta."
+			}
+		},
+		submitHandler: function(form) {
+			var respuesta = false;
+
+			$.ajax({
+				url:  base_url + 'checador/Main_controller/edit_register_control',
+				type:  'post',
+				data: $(form).serialize(),
+				success: function(respuesta){
+					if(respuesta){
+						window.location.href = base_url+'register';
+					}
+					else{
+						$('#edit_message').removeClass('hide');
+						$('#edit_message').addClass('animated fadeIn');
 					}
 				},
 				error:  function(xhr,err){ 

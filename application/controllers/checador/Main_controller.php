@@ -106,8 +106,8 @@ class Main_controller extends CI_Controller {
             $page = 'editar_registro';
             $panel_data['name'] = $this->session->userdata('name');
 
-            $this->db->select('id, nombre, clave, tipo');
-            $this->db->from('usuarios');
+            $this->db->select('id, id_user, tipo, entry_date, entry_time, exit_date, exit_time');
+            $this->db->from('historial');
             $this->db->where('id', $id);
             $this->db->where('status', 1);
             $query = $this->db->get();
@@ -122,8 +122,7 @@ class Main_controller extends CI_Controller {
                 ));
             }
             else{
-
-                $page = 'users';
+                $page = 'panel';
                 $this->load->view('layout/head');
                 $this->load->view('layout/header', $panel_data);
                 $this->load->view('content/'.$page);
@@ -131,6 +130,28 @@ class Main_controller extends CI_Controller {
                     'view_controller' => 'panel_vs.js'
                 ));
             } 
+        }
+    }
+
+    public function edit_register_control(){
+
+        $id = $_POST["id_registro"];
+
+        $this->db->set('entry_date', $_POST["entry-date"]);
+        $this->db->set('entry_time',  $_POST["entry-time"]);
+        $this->db->set('exit_date', $_POST["entry-date"]);
+        $this->db->set('exit_time',  $_POST["exit-time"]);
+        $this->db->set('tipo',  2);
+        $this->db->set('updated_user',  $this->session->userdata('id'));
+        $this->db->set('updated_date',  get_date());
+        $this->db->set('updated_time',  get_time());
+        $this->db->where('id', $id);
+
+        if($this->db->update('historial')){
+            echo true;
+        }
+        else{
+            echo false;
         }
     }
 
@@ -317,6 +338,48 @@ class Main_controller extends CI_Controller {
         }
 
         echo $html;
+    }
+
+    public function load_calendar(){
+        $this->db->select('id, id_user, tipo, entry_date, entry_time, exit_date, exit_time');
+        $this->db->from('historial');
+        $this->db->where('id', $_POST['id']);
+        $this->db->where('status', 1);
+        $query = $this->db->get();
+        $row = $query->row();
+
+        if(isset($row)){
+            $this->db->select('nombre');
+            $this->db->from('usuarios');
+            $this->db->where('id', $row->id_user);
+            $query2 = $this->db->get();
+            $row2 = $query2->row();
+
+            if(isset($row2)){
+
+                $entry_time    = explode(':', $row->entry_time);
+                $entry_minutes = ($entry_time[0] * 60.0 + $entry_time[1] * 1.0);
+
+                $exit_time    = explode(':', $row->exit_time);
+                $exit_minutes = ($exit_time[0] * 60.0 + $exit_time[1] * 1.0);
+
+                $registro = array(
+                    'id' => $row->id,
+                    'entry_date' => $row->entry_date,
+                    'entry_time' => $entry_minutes,
+                    'exit_time' => $exit_minutes,
+                    'name' => $row2->nombre
+                );
+
+                echo json_encode($registro);
+            }
+            else{
+                echo false;
+            }
+        }
+        else{
+            echo false;
+        }
     }
 
     public function get_month(){
