@@ -88,6 +88,52 @@ class Main_controller extends CI_Controller {
         }
     }
 
+    public function edit_register(){
+        $id = $this->uri->segment(2);
+        $row = '';
+        $data = '';
+
+        if( ! $this->session->has_userdata('auth')){
+            $page = 'home';
+            $data['date'] = get_date_string(get_date());
+            $this->load->view('layout/head');
+            $this->load->view('content/'.$page, $data);
+            $this->load->view('layout/scripts', array(
+                'view_controller' => 'home_vs.js'
+            ));
+        }
+        else{
+            $page = 'editar_registro';
+            $panel_data['name'] = $this->session->userdata('name');
+
+            $this->db->select('id, nombre, clave, tipo');
+            $this->db->from('usuarios');
+            $this->db->where('id', $id);
+            $this->db->where('status', 1);
+            $query = $this->db->get();
+            $row = $query->row();
+
+            if (isset($row)){
+                $this->load->view('layout/head');
+                $this->load->view('layout/header', $panel_data);
+                $this->load->view('content/'.$page, $row);
+                $this->load->view('layout/scripts', array(
+                    'view_controller' => 'panel_vs.js'
+                ));
+            }
+            else{
+
+                $page = 'users';
+                $this->load->view('layout/head');
+                $this->load->view('layout/header', $panel_data);
+                $this->load->view('content/'.$page);
+                $this->load->view('layout/scripts', array(
+                    'view_controller' => 'panel_vs.js'
+                ));
+            } 
+        }
+    }
+
     public function edit_user(){
         $id = $this->uri->segment(2);
         $row = '';
@@ -197,6 +243,65 @@ class Main_controller extends CI_Controller {
         else{
             echo false;
         } 
+    }
+
+    public function get_activity(){
+        $this->db->select('id_user, entry_date, entry_time, exit_date, exit_time');
+        $this->db->from('historial');
+        $this->db->where('id', $_POST['id']);
+        $query = $this->db->get();
+        $row = $query->row();
+
+        if (isset($row)){
+            $this->db->select('nombre');
+            $this->db->from('usuarios');
+            $this->db->where('id', $row->id_user);
+            $query2 = $this->db->get();
+            $row2 = $query2->row();
+
+            $this->db->select('actividad');
+            $this->db->from('actividades');
+            $this->db->where('id_historial', $_POST['id']);
+            $query3 = $this->db->get();
+            $row3 = $query3->row();
+
+
+            if (isset($row2) && isset($row3)){
+                $html ='
+                <div class="card col s12">
+                    <table class="responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Entrada</th>
+                                <th>Salida</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>'.$row2->nombre.'</td>
+                                <td>'.get_date_string($row->entry_date).' - '.$row->entry_time.'</td>
+                                <td>'.get_date_string($row->exit_date).' - '.$row->exit_time.'</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="divider"></div>
+                    <div class="col s12">
+                        <p><strong>Descripción de Actividad: </strong></p>
+                        <p class="justify">'.$row3->actividad.'<p>
+                    </div>
+                </div>
+                ';
+
+                echo $html;
+            }
+            else{
+                echo false;
+            }
+        }
+        else{
+            echo false;
+        }
     }
 
     public function load_report_users(){
@@ -478,22 +583,22 @@ class Main_controller extends CI_Controller {
 
                 $html ='
                 <div class="card col s12">
-                    <table class="responsive-table">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Entrada</th>
-                                <th>Salida</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>'.$row2->nombre.'</td>
-                                <td>'.get_date_string($row->entry_date).' - '.$row->entry_time.'</td>
-                                <td>'.get_date_string($row->exit_date).' - '.$row->exit_time.'</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <table class="responsive-table">
+                <thead>
+                <tr>
+                <th>Nombre</th>
+                <th>Entrada</th>
+                <th>Salida</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                <td>'.$row2->nombre.'</td>
+                <td>'.get_date_string($row->entry_date).' - '.$row->entry_time.'</td>
+                <td>'.get_date_string($row->exit_date).' - '.$row->exit_time.'</td>
+                </tr>
+                </tbody>
+                </table>
                 </div>';
 
                 echo $html;

@@ -29,6 +29,11 @@ th, td{
   height: 100%;
 }
 
+.justify{
+  text-align: justify;
+  text-justify: inter-word;
+}
+
 .error{
   top: 44px !important;
   color: #f44336 !important;

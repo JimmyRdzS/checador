@@ -72,7 +72,7 @@
         <p id="delete_message" class="hide"></p>
       </div>
       <div id="datos-registro" class="col s12 center-align">
-        
+
       </div>
       <div class="col l12">
         <form id="delete_register_form" name="delete_register_form" class="col s12">
@@ -90,6 +90,19 @@
             <button type="submit" class="btn waves-effect btn-block waves-light green">Eliminar</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="ver_actividad" class="modal">
+  <div class="modal-content">
+    <div class="row">
+      <div id="datos-actividad" class="col s12 center-align">
+
+      </div>
+      <div class="col s12 center-align">
+        <button href="#!" class="modal-action modal-close waves-effect waves-green btn-flat" type="reset">Cerrar</button>
       </div>
     </div>
   </div>

@@ -53,6 +53,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $route['default_controller'] = 'Main_controller/index';
 $route['logout'] = 'checador/Main_controller/logout';
+$route['editar_registro/:num'] = 'checador/Main_controller/edit_register/$1';
 $route['editar_usuario/:num'] = 'checador/Main_controller/edit_user/$1';
 $route['(:any)'] = 'checador/Main_controller/view/$1';
 

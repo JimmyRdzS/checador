@@ -70,7 +70,20 @@ function change_password(id, nombre) {
 }
 
 function detalles(id) {
-	
+	$.ajax({
+		url:  base_url + 'checador/Main_controller/get_activity',
+		type:  'post',
+		data: {'id': id},
+		success: function(respuesta){
+			if(respuesta){
+				$("#datos-actividad").html(respuesta);
+				$("#ver_actividad").modal('open');
+			}
+		},
+		error:  function(xhr,err){ 
+			console.log("readyState: "+xhr.readyState+"\nstatus: "+xhr.status+"\n \n responseText: "+xhr.responseText);
+		}
+	});
 }
 
 function get_username(clave) {
