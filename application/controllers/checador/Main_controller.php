@@ -502,33 +502,39 @@ class Main_controller extends CI_Controller {
             $this->db->select('id, id_user, tipo');
             $this->db->from('historial');
             $this->db->where('id_user', $row->id);
+            $this->db->where('tipo', 1);
             $this->db->where('entry_date', $fecha_actual);
             $this->db->where('status', 1);
             $query2 = $this->db->get();
             $row2 = $query2->row();
 
             if (isset($row2)){
-                $this->db->select('id, id_user, tipo');
-                $this->db->from('historial');
-                $this->db->where('id_user', $row->id);
-                $this->db->where('exit_date', $fecha_actual);
-                $this->db->where('tipo', 2);
-                $this->db->where('status', 1);
-                $query3 = $this->db->get();
-                $row3 = $query3->row();
+                $response = array(
+                    'type' => 2,
+                    'message' => 'Se necesita registrar la actividad.' 
+                );
 
-                if (isset($row3)){
-                    $response = array(
-                        'type' => 3,
-                        'message' => 'La salida ya había sido registrada.' 
-                    );
-                }
-                else{
-                    $response = array(
-                        'type' => 2,
-                        'message' => 'Se necesita registrar la actividad.' 
-                    );
-                }
+                // $this->db->select('id, id_user, tipo');
+                // $this->db->from('historial');
+                // $this->db->where('id_user', $row->id);
+                // $this->db->where('exit_date', $fecha_actual);
+                // $this->db->where('tipo', 2);
+                // $this->db->where('status', 1);
+                // $query3 = $this->db->get();
+                // $row3 = $query3->row();
+
+                // if (isset($row3)){
+                //     $response = array(
+                //         'type' => 3,
+                //         'message' => 'La salida ya había sido registrada.' 
+                //     );
+                // }
+                // else{
+                //     $response = array(
+                //         'type' => 2,
+                //         'message' => 'Se necesita registrar la actividad.' 
+                //     );
+                // }
             }
             else{
                 $data = array(

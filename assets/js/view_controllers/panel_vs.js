@@ -1111,75 +1111,75 @@ function actualizar_graphs(){
 			}
 		});
 
-		$.ajax({
-			url:  base_url + 'checador/Main_controller/get_graph_horario_usuario',
-			type:  'post',
-			data: {'month': month, 'usuario': usuario},
-			success: function(respuesta){
-				var data = JSON.parse(respuesta);
+		// $.ajax({
+		// 	url:  base_url + 'checador/Main_controller/get_graph_horario_usuario',
+		// 	type:  'post',
+		// 	data: {'month': month, 'usuario': usuario},
+		// 	success: function(respuesta){
+		// 		var data = JSON.parse(respuesta);
 
-				Highcharts.chart('horario_usuario', {
-					chart: {
-						type: 'arearange',
-						zoomType: 'x',
-						scrollablePlotArea: {
-							minWidth: 600,
-							scrollPositionX: 1
-						}
-					},
+		// 		Highcharts.chart('horario_usuario', {
+		// 			chart: {
+		// 				type: 'arearange',
+		// 				zoomType: 'x',
+		// 				scrollablePlotArea: {
+		// 					minWidth: 600,
+		// 					scrollPositionX: 1
+		// 				}
+		// 			},
 
-					title: {
-						text: 'Horario de asistencia por día'
-					},
-					xAxis: {
-						type: 'datetime',
-						labels: {
-							format: '{value:%Y-%b-%e}'
-						},
-					},
-					yAxis: {
-						title: {
-							text: null
-						},
-						type: 'datetime',
-						dateTimeLabelFormats: {
-							second: '%H:%M:%S',
-							minute: '%H:%M:%S',
-							hour: '%H:%M:%S',
-							day: '%H:%M:%S',
-							week: '%H:%M:%S',
-							month: '%H:%M:%S',
-							year: '%H:%M:%S'
-						}
-					},
-					tooltip: {
-						crosshairs: true,
-						shared: true,
-						valueSuffix: 'hrs',
-						xDateFormat: '%Y-%m-%d',
-						formatter: function() {
-							//console.log(this);
-							if(this.points[0].point.low == this.points[0].point.high){
-								return 'El día <b>' + Highcharts.dateFormat('%Y/%m/%d', this.x) +'</b><br/> No asistió';
-							}
-							else{
-								return 'El día <b>' + Highcharts.dateFormat('%Y/%m/%d', this.x) +'</b><br/> Asistió de las '+ Highcharts.dateFormat('%H:%M:%S', this.points[0].point.low) + ' a las '+ Highcharts.dateFormat('%H:%M:%S', this.points[0].point.high);
-							}
-						}
-					},
-					legend: {
-						enabled: false
-					},
-					series: [{
-						name: 'Horario',
-						data: data
-					}]
-				});
-			},
-			error:  function(xhr,err){ 
-				console.log("readyState: "+xhr.readyState+"\nstatus: "+xhr.status+"\n \n responseText: "+xhr.responseText);
-			}
-		});
+		// 			title: {
+		// 				text: 'Horario de asistencia por día'
+		// 			},
+		// 			xAxis: {
+		// 				type: 'datetime',
+		// 				labels: {
+		// 					format: '{value:%Y-%b-%e}'
+		// 				},
+		// 			},
+		// 			yAxis: {
+		// 				title: {
+		// 					text: null
+		// 				},
+		// 				type: 'datetime',
+		// 				dateTimeLabelFormats: {
+		// 					second: '%H:%M:%S',
+		// 					minute: '%H:%M:%S',
+		// 					hour: '%H:%M:%S',
+		// 					day: '%H:%M:%S',
+		// 					week: '%H:%M:%S',
+		// 					month: '%H:%M:%S',
+		// 					year: '%H:%M:%S'
+		// 				}
+		// 			},
+		// 			tooltip: {
+		// 				crosshairs: true,
+		// 				shared: true,
+		// 				valueSuffix: 'hrs',
+		// 				xDateFormat: '%Y-%m-%d',
+		// 				formatter: function() {
+		// 					//console.log(this);
+		// 					if(this.points[0].point.low == this.points[0].point.high){
+		// 						return 'El día <b>' + Highcharts.dateFormat('%Y/%m/%d', this.x) +'</b><br/> No asistió';
+		// 					}
+		// 					else{
+		// 						return 'El día <b>' + Highcharts.dateFormat('%Y/%m/%d', this.x) +'</b><br/> Asistió de las '+ Highcharts.dateFormat('%H:%M:%S', this.points[0].point.low) + ' a las '+ Highcharts.dateFormat('%H:%M:%S', this.points[0].point.high);
+		// 					}
+		// 				}
+		// 			},
+		// 			legend: {
+		// 				enabled: false
+		// 			},
+		// 			series: [{
+		// 				name: 'Horario',
+		// 				data: data
+		// 			}]
+		// 		});
+		// 	},
+		// 	error:  function(xhr,err){ 
+		// 		console.log("readyState: "+xhr.readyState+"\nstatus: "+xhr.status+"\n \n responseText: "+xhr.responseText);
+		// 	}
+		// });
 		
 	}
 }

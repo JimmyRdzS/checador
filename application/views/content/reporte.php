@@ -62,20 +62,20 @@
           <canvas id="horas-dia-usuario" width="100%" height="30"></canvas>
         </div>
       </div>
-      <div class="row full-width">
+<!--       <div class="row full-width">
         <div class="col s12">
           <h5 class="pd15">Horario de asistencia</h5>
           <div class="divider"></div>
           <div id="horario_usuario" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
         </div>
-      </div>
+      </div> -->
       <div class="row full-width">
         <div class="col s4 center-align">
           <h5 class="average-title">Horas trabajadas</h5>
           <div class="divider"></div>
           <p id="total-horas-trabajadas" class="average-text">15 horas</p>
         </div>
-        <div class="col s4 center-align">
+<!--         <div class="col s4 center-align">
           <h5 class="average-title">Hora de llegada (promedio).</h5>
           <div class="divider"></div>
           <p id="promedio-hora-llegada" class="average-text">09:00</p>
@@ -84,7 +84,7 @@
           <h5 class="average-title">Hora de salida (promedio).</h5>
           <div class="divider"></div>
           <p id="promedio-hora-salida" class="average-text">19:00</p>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
